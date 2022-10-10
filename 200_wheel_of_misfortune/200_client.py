@@ -1,31 +1,45 @@
 import socket, sys, re
+from ctf_client import CTFClient, CTFException
 
 def main():
-    #create a connection to the server app
-    tcp_socket = socket.create_connection(("localhost", 9000))
-    print("tcp_socket: ", tcp_socket)
+    # Initialize our connection
+    try:
+        client = CTFClient("localhost", 9000)
+    except CTFException:
+        sys.exit("Failed to connect -- is the server running?")
 
     while True:
-        words = tcp_socket.recv(1024).decode()
-        print("words: ", words)
-        data = wheel(words).encode()
-        tcp_socket.sendall(data)
-        print(f"Data: {data}")
+        # Get some stuff from the server
+        given = client.get_data()
+        print(f"*** Received Below from Server ***\n\n{given}")
 
-    print("Closing socket")
-    tcp_socket.close()
+        # Does it have a flag?
+        if "flag" in given:
+            # Snag just the flag in the form "flag{...}"
+            start = given.find("flag{")
+            end = given.find("}", start)
 
-#takes the server output, splits the list and uses the vowels()
+            # We're done!
+            print(f"---> Found the flag: {given[start:end + 1]}")
+            sys.exit(0)
+        else:
+            #print(given)
+            data = wheel(given)
+            client.send_data(data)
+            print(f"Data: {data}")
+
+#takes the server output, splits on the arrow and then on the newline and calls vowels()
 def wheel(words):
-    word_list = words.split(" ")
-    print("word_list: ", word_list)
-    print(len(word_list))
-    if len(word_list) > 3:
-        word = word_list[3].split("\n")
-    else:
-        word = word_list[0]
-    print("word: ", word)
-    v = vowels(word[1])
+    word_list = words.split("->")
+    #print("word_list: ", word_list)
+    word = word_list[0]
+    #print("word: ", word)
+    word_list_2 = word.split("\n")
+    #print("word_2: ", word_list_2)
+    word_3 = word_list_2[-1]
+    #print("word_3: ", word_3)
+    word_3 = word_3.strip()
+    v = vowels(word_3)
     return v
 
 #return a string of vowels from the word
@@ -33,14 +47,11 @@ def vowels(word):
     lst = ["a", "e", "i", "o", "u"]
     vwls = []
     for letter in word:
-        print(letter)
         for vowel in lst:
-            print(vowel)
             if letter == vowel:
                 vwls.append(letter)
     final = ''.join(vwls)
     return final
-
 
 if __name__ == "__main__":
     main()
