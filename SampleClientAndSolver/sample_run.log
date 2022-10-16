@@ -1,0 +1,33 @@
+black *.py
+mypy --ignore-missing-imports --follow-imports skip *.py
+Success: no issues found in 3 source files
+pylint *.py
+
+--------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
+
+rm -rf .coverage.*
+coverage run -m pytest -v -s \
+	test_*.py
+============================= test session starts ==============================
+platform linux -- Python 3.10.7, pytest-6.2.5, py-1.11.0, pluggy-1.0.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/karl/CTF_Samples/SampleClientAndSolver
+collecting ... collected 4 items
+
+test_ctf_client.py::TestCTFClient::test_connect_good PASSED
+test_ctf_client.py::TestCTFClient::test_connect_bad PASSED
+test_ctf_client.py::TestCTFClient::test_get PASSED
+test_ctf_client.py::TestCTFClient::test_send PASSED
+
+============================== 4 passed in 0.01s ===============================
+coverage combine
+Combined data file .coverage.banshee.120191.880711
+coverage report
+Name            Stmts   Miss  Cover
+-----------------------------------
+ctf_client.py      22      0   100%
+-----------------------------------
+TOTAL              22      0   100%
+coverage html
+Wrote HTML report to htmlcov/index.html
