@@ -1,0 +1,7 @@
+[run]
+parallel = True
+
+[report]
+skip_empty = True
+omit =  */site-packages/*
+        */test_*
