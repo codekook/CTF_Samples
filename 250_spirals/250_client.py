@@ -25,25 +25,30 @@ def main():
             sys.exit(0)
         #call fibonacci function to provide index position and return to server
         else:
-            data = fib_func(number2(given))
-            client.send_data(data)
+            num = number(given)
+            fib = fib_func()
+            count = 0
+            while True:
+                i = next(fib)
+                #print(i)
+                if num == i:
+                    data = count + 1
+                    break
+                else:
+                    count += 1
+                    if count > 300:
+                        break
+                #print("count: ", count)
+
+            client.send_data(str(data))
             print(f"Data: {data}")
 
-#returns the index position of the fibonacci number
-def fib_func(number):
-    #create a fibonacci sequence until matching the number provided by the server
-    list = [0]
-    fib_num = 1
-    n = 0
-    while n < number and fib_num < number:
-        fib_num = fib_num + n
-        list.append(fib_num)
-        n = n + fib_num
-        list.append(n)
-        #print("n: ", n, "fib_num: ", fib_num)
-    #print(list)
-    final = len(list) - 1
-    return str(final)
+#generator function to build a fibonacci sequence
+def fib_func():
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a + b
 
 #returns the integer type number from the server
 def number(given):
@@ -56,13 +61,9 @@ def number(given):
             save_list.append(i)
     #print(save_list)
     #covert the last number to an integer
-    number = int(save_list[-1])
-    return number
-
-#returns the integer type number from the server using re 
-def number2(given):
-    number = re.search("\d+\d", given)
-    return int(number.group())
+    my_number = int(save_list[-1])
+    #print("num: ", my_number)
+    return my_number
 
 if __name__ == "__main__":
     main()
